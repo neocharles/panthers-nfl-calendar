@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import json
+import re
 import urllib.request
 from pathlib import Path
 
 UPSTREAM = "https://cadem4.github.io/nfl-calendar/nfl-2026.ics"
-ESPN_SCOREBOARD = "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
+ESPN_CORE = "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl"
+ESPN_CDN_GAME = "https://cdn.espn.com/core/nfl/game?xhr=1&gameId={game_id}"
+PANTHERS_ESPN_TEAM_ID = "29"
 OUTPUT = Path("docs/panthers-playoffs.ics")
 
 
@@ -17,6 +20,10 @@ def fetch_text(url: str, *, user_agent: str | None = "panthers-nfl-calendar/1.0"
     request = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(request, timeout=30) as response:
         return response.read().decode("utf-8")
+
+
+def fetch_json(url: str) -> dict:
+    return json.loads(fetch_text(url, user_agent=None))
 
 
 def unfold_ical(text: str) -> list[str]:
@@ -95,63 +102,95 @@ def keep_event(event: list[str]) -> bool:
     return panthers or postseason
 
 
-def collect_scores_from_payload(payload: dict, results: dict[tuple[str, str], tuple[str, str]]) -> None:
-    for item in payload.get("events", []):
-        season = item.get("season", {})
-        if season.get("year") != 2026 or season.get("type") not in (2, 3):
-            continue
+def event_ids_from_collection(url: str) -> set[str]:
+    payload = fetch_json(url)
+    ids: set[str] = set()
+    for item in payload.get("items", []):
+        ref = item.get("$ref", "")
+        match = re.search(r"/events/(\d+)", ref)
+        if match:
+            ids.add(match.group(1))
+    return ids
 
-        competitions = item.get("competitions") or []
-        if not competitions:
-            continue
 
-        competition = competitions[0]
-        status_type = ((competition.get("status") or {}).get("type") or {})
-        if not status_type.get("completed"):
-            continue
+def relevant_espn_event_ids() -> set[str]:
+    ids: set[str] = set()
 
-        competitors = competition.get("competitors") or []
-        away = next((c for c in competitors if c.get("homeAway") == "away"), None)
-        home = next((c for c in competitors if c.get("homeAway") == "home"), None)
-        if not away or not home:
-            continue
+    # Only Panthers games are needed during the regular season.
+    try:
+        ids |= event_ids_from_collection(
+            f"{ESPN_CORE}/seasons/2026/teams/{PANTHERS_ESPN_TEAM_ID}/events?limit=40"
+        )
+    except Exception as exc:
+        print(f"Warning: ESPN Panthers event discovery failed: {exc}")
 
-        away_name = ((away.get("team") or {}).get("displayName") or "").strip()
-        home_name = ((home.get("team") or {}).get("displayName") or "").strip()
-        away_score = str(away.get("score", "")).strip()
-        home_score = str(home.get("score", "")).strip()
+    # Add every postseason game. Empty/unpublished rounds are harmless.
+    for week in range(1, 6):
+        try:
+            ids |= event_ids_from_collection(
+                f"{ESPN_CORE}/seasons/2026/types/3/weeks/{week}/events?limit=20"
+            )
+        except Exception as exc:
+            print(f"Warning: ESPN postseason week {week} discovery failed: {exc}")
 
-        if away_name and home_name and away_score and home_score:
-            results[(away_name, home_name)] = (away_score, home_score)
+    print(f"Discovered {len(ids)} relevant ESPN event IDs.")
+    return ids
+
+
+def score_from_game_package(game_id: str) -> tuple[tuple[str, str], tuple[str, str]] | None:
+    payload = fetch_json(ESPN_CDN_GAME.format(game_id=game_id))
+    package = payload.get("gamepackageJSON") or {}
+    header = package.get("header") or {}
+    competitions = header.get("competitions") or []
+    if not competitions:
+        return None
+
+    competition = competitions[0]
+    status = ((competition.get("status") or {}).get("type") or {})
+    if not status.get("completed"):
+        return None
+
+    competitors = competition.get("competitors") or []
+    away = next((c for c in competitors if c.get("homeAway") == "away"), None)
+    home = next((c for c in competitors if c.get("homeAway") == "home"), None)
+    if not away or not home:
+        return None
+
+    # The header reliably has IDs + scores. The boxscore provides display names.
+    team_names: dict[str, str] = {}
+    for team_entry in ((package.get("boxscore") or {}).get("teams") or []):
+        team = team_entry.get("team") or {}
+        team_id = str(team.get("id", ""))
+        display_name = (team.get("displayName") or "").strip()
+        if team_id and display_name:
+            team_names[team_id] = display_name
+
+    away_name = team_names.get(str(away.get("id", "")), "")
+    home_name = team_names.get(str(home.get("id", "")), "")
+    away_score = str(away.get("score", "")).strip()
+    home_score = str(home.get("score", "")).strip()
+
+    if not all((away_name, home_name, away_score, home_score)):
+        return None
+
+    return (away_name, home_name), (away_score, home_score)
 
 
 def fetch_final_scores() -> dict[tuple[str, str], tuple[str, str]]:
-    """
-    Query ESPN by NFL week rather than with a season-long date range.
-    ESPN is optional enrichment; failures never prevent calendar generation.
-    """
     results: dict[tuple[str, str], tuple[str, str]] = {}
-    failed = 0
+    failures = 0
 
-    queries = [(2, week) for week in range(1, 19)]
-    queries += [(3, week) for week in range(1, 6)]
-
-    for season_type, week in queries:
-        url = (
-            f"{ESPN_SCOREBOARD}?season=2026&seasontype={season_type}"
-            f"&week={week}&limit=100"
-        )
+    for game_id in sorted(relevant_espn_event_ids()):
         try:
-            payload = json.loads(fetch_text(url, user_agent=None))
-            collect_scores_from_payload(payload, results)
+            result = score_from_game_package(game_id)
+            if result:
+                matchup, score = result
+                results[matchup] = score
         except Exception as exc:
-            failed += 1
-            print(
-                f"Warning: ESPN score query failed "
-                f"(season type {season_type}, week {week}): {exc}"
-            )
+            failures += 1
+            print(f"Warning: ESPN game {game_id} score lookup failed: {exc}")
 
-    print(f"Loaded {len(results)} completed scores from ESPN; {failed} query failures.")
+    print(f"Loaded {len(results)} completed scores from ESPN; {failures} game lookup failures.")
     return results
 
 
@@ -218,7 +257,8 @@ def main() -> None:
 
     panthers_count = sum("Carolina Panthers" in field(e, "SUMMARY") for e in kept)
     scored_count = sum(
-        " @ " in field(e, "SUMMARY") and any(ch.isdigit() for ch in field(e, "SUMMARY"))
+        any(char.isdigit() for char in field(e, "SUMMARY"))
+        and " @ " in field(e, "SUMMARY")
         for e in kept
     )
     print(f"Wrote {len(kept)} events to {OUTPUT}")
