@@ -6,10 +6,7 @@ import urllib.request
 from pathlib import Path
 
 UPSTREAM = "https://cadem4.github.io/nfl-calendar/nfl-2026.ics"
-ESPN_SCOREBOARD = (
-    "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
-    "?limit=1000&dates=20260901-20270228"
-)
+ESPN_SCOREBOARD = "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
 OUTPUT = Path("docs/panthers-playoffs.ics")
 
 
@@ -17,7 +14,6 @@ def fetch_text(url: str, *, user_agent: str | None = "panthers-nfl-calendar/1.0"
     headers = {}
     if user_agent:
         headers["User-Agent"] = user_agent
-
     request = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(request, timeout=30) as response:
         return response.read().decode("utf-8")
@@ -47,12 +43,9 @@ def fold_line(line: str, limit: int = 75) -> list[str]:
 
 
 def extract_events(lines: list[str]) -> tuple[list[str], list[list[str]], list[str]]:
-    before: list[str] = []
-    events: list[list[str]] = []
-    after: list[str] = []
-    current: list[str] | None = None
+    before, events, after = [], [], []
+    current = None
     seen_event = False
-
     for line in lines:
         if line == "BEGIN:VEVENT":
             current = [line]
@@ -80,8 +73,7 @@ def field(event: list[str], name: str) -> str:
 
 def replace_field(event: list[str], name: str, value: str) -> list[str]:
     prefix = name + ":"
-    out: list[str] = []
-    replaced = False
+    out, replaced = [], False
     for line in event:
         if line.startswith(prefix):
             out.append(prefix + value)
@@ -96,66 +88,74 @@ def replace_field(event: list[str], name: str, value: str) -> list[str]:
 def keep_event(event: list[str]) -> bool:
     summary = field(event, "SUMMARY")
     categories = field(event, "CATEGORIES")
-
     panthers = "Carolina Panthers" in summary
     cats = {c.strip() for c in categories.split(",") if c.strip()}
     regular_season = any(c.startswith("Week ") for c in cats)
     postseason = ("NFL" in cats and "Football" in cats and not regular_season)
-
     return panthers or postseason
+
+
+def collect_scores_from_payload(payload: dict, results: dict[tuple[str, str], tuple[str, str]]) -> None:
+    for item in payload.get("events", []):
+        season = item.get("season", {})
+        if season.get("year") != 2026 or season.get("type") not in (2, 3):
+            continue
+
+        competitions = item.get("competitions") or []
+        if not competitions:
+            continue
+
+        competition = competitions[0]
+        status_type = ((competition.get("status") or {}).get("type") or {})
+        if not status_type.get("completed"):
+            continue
+
+        competitors = competition.get("competitors") or []
+        away = next((c for c in competitors if c.get("homeAway") == "away"), None)
+        home = next((c for c in competitors if c.get("homeAway") == "home"), None)
+        if not away or not home:
+            continue
+
+        away_name = ((away.get("team") or {}).get("displayName") or "").strip()
+        home_name = ((home.get("team") or {}).get("displayName") or "").strip()
+        away_score = str(away.get("score", "")).strip()
+        home_score = str(home.get("score", "")).strip()
+
+        if away_name and home_name and away_score and home_score:
+            results[(away_name, home_name)] = (away_score, home_score)
 
 
 def fetch_final_scores() -> dict[tuple[str, str], tuple[str, str]]:
     """
-    Return {(away_display_name, home_display_name): (away_score, home_score)}
-    for completed 2026-season NFL games.
-
-    ESPN is an enrichment source only. If it is unavailable or returns an
-    unexpected payload, calendar generation continues without score changes.
+    Query ESPN by NFL week rather than with a season-long date range.
+    ESPN is optional enrichment; failures never prevent calendar generation.
     """
-    try:
-        payload = json.loads(fetch_text(ESPN_SCOREBOARD, user_agent=None))
-        results: dict[tuple[str, str], tuple[str, str]] = {}
+    results: dict[tuple[str, str], tuple[str, str]] = {}
+    failed = 0
 
-        for item in payload.get("events", []):
-            season = item.get("season", {})
-            if season.get("year") != 2026 or season.get("type") not in (2, 3):
-                continue
+    queries = [(2, week) for week in range(1, 19)]
+    queries += [(3, week) for week in range(1, 6)]
 
-            competitions = item.get("competitions") or []
-            if not competitions:
-                continue
+    for season_type, week in queries:
+        url = (
+            f"{ESPN_SCOREBOARD}?season=2026&seasontype={season_type}"
+            f"&week={week}&limit=100"
+        )
+        try:
+            payload = json.loads(fetch_text(url, user_agent=None))
+            collect_scores_from_payload(payload, results)
+        except Exception as exc:
+            failed += 1
+            print(
+                f"Warning: ESPN score query failed "
+                f"(season type {season_type}, week {week}): {exc}"
+            )
 
-            competition = competitions[0]
-            status_type = ((competition.get("status") or {}).get("type") or {})
-            if not status_type.get("completed"):
-                continue
-
-            competitors = competition.get("competitors") or []
-            away = next((c for c in competitors if c.get("homeAway") == "away"), None)
-            home = next((c for c in competitors if c.get("homeAway") == "home"), None)
-            if not away or not home:
-                continue
-
-            away_name = ((away.get("team") or {}).get("displayName") or "").strip()
-            home_name = ((home.get("team") or {}).get("displayName") or "").strip()
-            away_score = str(away.get("score", "")).strip()
-            home_score = str(home.get("score", "")).strip()
-
-            if away_name and home_name and away_score and home_score:
-                results[(away_name, home_name)] = (away_score, home_score)
-
-        print(f"Loaded {len(results)} completed scores from ESPN.")
-        return results
-    except Exception as exc:
-        print(f"Warning: ESPN score enrichment unavailable: {exc}")
-        return {}
+    print(f"Loaded {len(results)} completed scores from ESPN; {failed} query failures.")
+    return results
 
 
-def add_final_score(
-    event: list[str],
-    final_scores: dict[tuple[str, str], tuple[str, str]],
-) -> list[str]:
+def add_final_score(event: list[str], final_scores: dict[tuple[str, str], tuple[str, str]]) -> list[str]:
     summary = field(event, "SUMMARY")
     if " @ " not in summary:
         return event
@@ -166,8 +166,7 @@ def add_final_score(
         return event
 
     away_score, home_score = score
-    scored_summary = f"{away_name} {away_score} @ {home_name} {home_score}"
-    return replace_field(event, "SUMMARY", scored_summary)
+    return replace_field(event, "SUMMARY", f"{away_name} {away_score} @ {home_name} {home_score}")
 
 
 def rewrite_calendar_name(lines: list[str]) -> list[str]:
@@ -180,15 +179,13 @@ def rewrite_calendar_name(lines: list[str]) -> list[str]:
         "NAME:": "NAME:Panthers + NFL Playoffs",
         "X-WR-CALNAME:": "X-WR-CALNAME:Panthers + NFL Playoffs",
     }
-    out: list[str] = []
+    out = []
     for line in lines:
-        replaced = False
         for prefix, replacement in replacements.items():
             if line.startswith(prefix):
                 out.append(replacement)
-                replaced = True
                 break
-        if not replaced:
+        else:
             out.append(line)
     return out
 
@@ -206,7 +203,7 @@ def main() -> None:
     kept = [add_final_score(event, final_scores) for event in kept]
     before = rewrite_calendar_name(before)
 
-    out_lines: list[str] = []
+    out_lines = []
     for line in before:
         out_lines.extend(fold_line(line))
     for event in kept:
@@ -217,15 +214,11 @@ def main() -> None:
             out_lines.extend(fold_line(line))
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(
-        "\r\n".join(out_lines).rstrip("\r\n") + "\r\n",
-        encoding="utf-8",
-    )
+    OUTPUT.write_text("\r\n".join(out_lines).rstrip("\r\n") + "\r\n", encoding="utf-8")
 
     panthers_count = sum("Carolina Panthers" in field(e, "SUMMARY") for e in kept)
     scored_count = sum(
-        " @ " in field(e, "SUMMARY")
-        and any(ch.isdigit() for ch in field(e, "SUMMARY"))
+        " @ " in field(e, "SUMMARY") and any(ch.isdigit() for ch in field(e, "SUMMARY"))
         for e in kept
     )
     print(f"Wrote {len(kept)} events to {OUTPUT}")
