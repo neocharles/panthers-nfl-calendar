@@ -105,7 +105,7 @@ That upstream feed provides the NFL schedule along with available venue, televis
 
 ### Final scores
 
-Completed-game scores are added using ESPN's public NFL scoreboard data.
+Completed-game scores are added using ESPN's public NFL Core/CDN data. Endpoint behavior and examples were cross-checked against the community-maintained [Public ESPN API documentation](https://github.com/pseudo-r/Public-ESPN-API).
 
 ESPN is treated as **optional enrichment**. If that request fails or the response cannot be parsed, calendar generation continues normally using the schedule and broadcast information. A temporary scoreboard problem therefore does not break the calendar feed.
 
@@ -143,7 +143,7 @@ If ESPN is unavailable, the calendar can still update schedule, venue, broadcast
 
 ## Acknowledgements
 
-This project builds on the excellent work in [CadeM4/nfl-calendar](https://github.com/CadeM4/nfl-calendar), which provides the maintained NFL schedule and viewing-data foundation.
+This project builds on the excellent work in [CadeM4/nfl-calendar](https://github.com/CadeM4/nfl-calendar), which provides the maintained NFL schedule and viewing-data foundation. ESPN endpoint behavior and examples were informed by [pseudo-r/Public-ESPN-API](https://github.com/pseudo-r/Public-ESPN-API).
 
 Project design, filtering logic, GitHub Actions automation, score enrichment, and documentation were developed collaboratively with **[ChatGPT by OpenAI](https://chatgpt.com/)**.
 
