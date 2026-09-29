@@ -7,17 +7,18 @@ from pathlib import Path
 
 UPSTREAM = "https://cadem4.github.io/nfl-calendar/nfl-2026.ics"
 ESPN_SCOREBOARD = (
-    "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
+    "https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
     "?limit=1000&dates=20260901-20270228"
 )
 OUTPUT = Path("docs/panthers-playoffs.ics")
 
 
-def fetch_text(url: str) -> str:
-    request = urllib.request.Request(
-        url,
-        headers={"User-Agent": "panthers-nfl-calendar/1.0"},
-    )
+def fetch_text(url: str, *, user_agent: str | None = "panthers-nfl-calendar/1.0") -> str:
+    headers = {}
+    if user_agent:
+        headers["User-Agent"] = user_agent
+
+    request = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(request, timeout=30) as response:
         return response.read().decode("utf-8")
 
@@ -113,7 +114,7 @@ def fetch_final_scores() -> dict[tuple[str, str], tuple[str, str]]:
     unexpected payload, calendar generation continues without score changes.
     """
     try:
-        payload = json.loads(fetch_text(ESPN_SCOREBOARD))
+        payload = json.loads(fetch_text(ESPN_SCOREBOARD, user_agent=None))
         results: dict[tuple[str, str], tuple[str, str]] = {}
 
         for item in payload.get("events", []):
@@ -223,12 +224,9 @@ def main() -> None:
 
     panthers_count = sum("Carolina Panthers" in field(e, "SUMMARY") for e in kept)
     scored_count = sum(
-        any(
-            key == tuple(part.strip().rsplit(" ", 1)[0] for part in field(e, "SUMMARY").split(" @ ", 1))
-            for key in final_scores
-        )
+        " @ " in field(e, "SUMMARY")
+        and any(ch.isdigit() for ch in field(e, "SUMMARY"))
         for e in kept
-        if " @ " in field(e, "SUMMARY")
     )
     print(f"Wrote {len(kept)} events to {OUTPUT}")
     print(f"Panthers games currently present: {panthers_count}")
