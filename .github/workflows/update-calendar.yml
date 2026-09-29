@@ -1,0 +1,36 @@
+name: Update calendar
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate calendar
+        run: python generate_calendar.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/panthers-playoffs.ics
+          if git diff --cached --quiet; then
+            echo "Calendar is already current."
+            exit 0
+          fi
+          git commit -m "Update Panthers + NFL Playoffs calendar"
+          git push
