@@ -4,7 +4,8 @@ PRODID:-//NFL Calendar//Independent schedule subscriptions//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALDESC:Carolina Panthers regular season plus every NFL postseason gam
- e. TV and streaming details included when published.
+ e. TV and streaming details included when published; completed games inclu
+ de final scores.
 NAME:Panthers + NFL Playoffs
 X-WR-CALNAME:Panthers + NFL Playoffs
 REFRESH-INTERVAL;VALUE=DURATION:PT6H
