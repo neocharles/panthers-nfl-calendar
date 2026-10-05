@@ -93,9 +93,9 @@ BEGIN:VEVENT
 SUMMARY:Detroit Lions 26 @ Carolina Panthers 32
 DTSTART:20261005T002000Z
 DTEND:20261005T033500Z
-DTSTAMP:20260927T005047Z
+DTSTAMP:20261005T091518Z
 UID:887a0e4dcccac999d43d2c69c2f897ec@nfl-calendar.local
-SEQUENCE:0
+SEQUENCE:1
 CATEGORIES:NFL,Football,Week 4
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 4\n\nDetroit Lions @ Carolina Panthers\n\nKicko
@@ -106,7 +106,7 @@ DESCRIPTION:NFL 2026 · Week 4\n\nDetroit Lions @ Carolina Panthers\n\nKicko
   are for the US\; eligible subscriptions and geographic restrictions apply
  .\nUS national broadcast.\n\nVenue\nBank of America Stadium\nCharlotte\n\n
  Schedule source: https://www.nfl.com/games/lions-at-panthers-2026-reg-4
-LAST-MODIFIED:20260927T005047Z
+LAST-MODIFIED:20261005T091518Z
 LOCATION:Bank of America Stadium\nCharlotte
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
