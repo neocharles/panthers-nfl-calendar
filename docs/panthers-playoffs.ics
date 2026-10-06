@@ -116,18 +116,23 @@ BEGIN:VEVENT
 SUMMARY:Carolina Panthers @ Philadelphia Eagles
 DTSTART:20261018T170000Z
 DTEND:20261018T201500Z
-DTSTAMP:20260927T005047Z
+DTSTAMP:20261005T213207Z
 UID:e2165c7791af7f8ae6dfb97c466a05ba@nfl-calendar.local
-SEQUENCE:0
+SEQUENCE:1
 CATEGORIES:NFL,Football,Week 6
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 6\n\nCarolina Panthers @ Philadelphia Eagles\n\
  nKickoff: Sunday\, October 18\, 2026 at 1:00 PM EDT (America/New_York)\nEs
- timated game duration: 3 hours 15 minutes.\n\nWatch\nTV: CBS\nRegional bro
- adcast\; local market coverage varies.\n\nVenue\nLincoln Financial Field\n
- Philadelphia\n\nSchedule source: https://www.nfl.com/games/panthers-at-eag
- les-2026-reg-6
-LAST-MODIFIED:20260927T005047Z
+ timated game duration: 3 hours 15 minutes.\n\nWatch\nTV: CBS\nStreaming: N
+ FL+\, Paramount+\nNFL Sunday Ticket: eligible out-of-market Sunday afterno
+ on viewing\; local and national blackouts apply.\nNFL+: local and primetim
+ e live game streams require a phone or tablet\; market and device restrict
+ ions apply.\nParamount+: this game must be carried by your local CBS stati
+ on.\nRegional broadcast\; local market coverage varies.\nStreaming listing
+ s are for the US\; eligible subscriptions and geographic restrictions appl
+ y.\n\nVenue\nLincoln Financial Field\nPhiladelphia\n\nSchedule source: htt
+ ps://www.nfl.com/games/panthers-at-eagles-2026-reg-6
+LAST-MODIFIED:20261005T213207Z
 LOCATION:Lincoln Financial Field\nPhiladelphia
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
