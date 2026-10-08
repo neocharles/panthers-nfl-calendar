@@ -249,21 +249,21 @@ BEGIN:VEVENT
 SUMMARY:Carolina Panthers @ Tampa Bay Buccaneers
 DTSTART:20261201T011500Z
 DTEND:20261201T043000Z
-DTSTAMP:20260927T005047Z
+DTSTAMP:20261008T001606Z
 UID:2738bc9d4119f189e3be0396db801401@nfl-calendar.local
-SEQUENCE:0
+SEQUENCE:1
 CATEGORIES:NFL,Football,Week 12
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 12\n\nCarolina Panthers @ Tampa Bay Buccaneers\
  n\nKickoff: Monday\, November 30\, 2026 at 8:15 PM EST (America/New_York)\
  nEstimated game duration: 3 hours 15 minutes.\n\nWatch\nTV: ESPN\, ESPN De
- portes\nStreaming: ESPN Unlimited\, NFL+\nNFL+: local and primetime live g
- ame streams require a phone or tablet\; market and device restrictions app
- ly.\nStreaming listings are for the US\; eligible subscriptions and geogra
- phic restrictions apply.\nUS national broadcast.\n\nVenue\nRaymond James S
- tadium\nTampa\n\nSchedule source: https://www.nfl.com/games/panthers-at-bu
- ccaneers-2026-reg-12
-LAST-MODIFIED:20260927T005047Z
+ portes\, ESPN2\nStreaming: ESPN Unlimited\, NFL+\nNFL+: local and primetim
+ e live game streams require a phone or tablet\; market and device restrict
+ ions apply.\nStreaming listings are for the US\; eligible subscriptions an
+ d geographic restrictions apply.\nUS national broadcast.\n\nVenue\nRaymond
+  James Stadium\nTampa\n\nSchedule source: https://www.nfl.com/games/panthe
+ rs-at-buccaneers-2026-reg-12
+LAST-MODIFIED:20261008T001606Z
 LOCATION:Raymond James Stadium\nTampa
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
