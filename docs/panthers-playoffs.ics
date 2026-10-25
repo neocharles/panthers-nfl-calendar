@@ -139,12 +139,12 @@ TRANSP:TRANSPARENT
 URL:https://www.nfl.com/games/panthers-at-eagles-2026-reg-6
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Tampa Bay Buccaneers @ Carolina Panthers
+SUMMARY:Tampa Bay Buccaneers 43 @ Carolina Panthers 13
 DTSTART:20261025T170000Z
 DTEND:20261025T201500Z
-DTSTAMP:20261018T124025Z
+DTSTAMP:20261025T174240Z
 UID:770e2e484cdcc98044620782ef7d7dd5@nfl-calendar.local
-SEQUENCE:1
+SEQUENCE:2
 CATEGORIES:NFL,Football,Week 7
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 7\n\nTampa Bay Buccaneers @ Carolina Panthers\n
@@ -158,7 +158,7 @@ DESCRIPTION:NFL 2026 · Week 7\n\nTampa Bay Buccaneers @ Carolina Panthers\n
  r the US\; eligible subscriptions and geographic restrictions apply.\n\nVe
  nue\nBank of America Stadium\nCharlotte\n\nSchedule source: https://www.nf
  l.com/games/buccaneers-at-panthers-2026-reg-7
-LAST-MODIFIED:20261018T124025Z
+LAST-MODIFIED:20261025T174240Z
 LOCATION:Bank of America Stadium\nCharlotte
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
