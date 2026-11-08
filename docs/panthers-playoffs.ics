@@ -188,12 +188,12 @@ TRANSP:TRANSPARENT
 URL:https://www.nfl.com/games/panthers-at-packers-2026-reg-8
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Denver Broncos @ Carolina Panthers
+SUMMARY:Denver Broncos 26 @ Carolina Panthers 21
 DTSTART:20261108T180000Z
 DTEND:20261108T211500Z
-DTSTAMP:20261026T075547Z
+DTSTAMP:20261108T185421Z
 UID:fc1522869e5e821c1e426281acfb9b84@nfl-calendar.local
-SEQUENCE:1
+SEQUENCE:2
 CATEGORIES:NFL,Football,Week 9
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 9\n\nDenver Broncos @ Carolina Panthers\n\nKick
@@ -207,7 +207,7 @@ DESCRIPTION:NFL 2026 · Week 9\n\nDenver Broncos @ Carolina Panthers\n\nKick
   for the US\; eligible subscriptions and geographic restrictions apply.\n\
  nVenue\nBank of America Stadium\nCharlotte\n\nSchedule source: https://www
  .nfl.com/games/broncos-at-panthers-2026-reg-9
-LAST-MODIFIED:20261026T075547Z
+LAST-MODIFIED:20261108T185421Z
 LOCATION:Bank of America Stadium\nCharlotte
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
