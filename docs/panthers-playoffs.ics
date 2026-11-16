@@ -214,12 +214,12 @@ TRANSP:TRANSPARENT
 URL:https://www.nfl.com/games/broncos-at-panthers-2026-reg-9
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Carolina Panthers @ New Orleans Saints
+SUMMARY:Carolina Panthers 20 @ New Orleans Saints 17
 DTSTART:20261115T180000Z
 DTEND:20261115T211500Z
-DTSTAMP:20261104T093013Z
+DTSTAMP:20261116T000233Z
 UID:f1985530a9b3df28a3fca43b02b2810d@nfl-calendar.local
-SEQUENCE:1
+SEQUENCE:3
 CATEGORIES:NFL,Football,Week 10
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 10\n\nCarolina Panthers @ New Orleans Saints\n\
@@ -233,7 +233,7 @@ DESCRIPTION:NFL 2026 · Week 10\n\nCarolina Panthers @ New Orleans Saints\n\
  r the US\; eligible subscriptions and geographic restrictions apply.\n\nVe
  nue\nCaesars Superdome\nNew Orleans\n\nSchedule source: https://www.nfl.co
  m/games/panthers-at-saints-2026-reg-10
-LAST-MODIFIED:20261104T093013Z
+LAST-MODIFIED:20261116T000233Z
 LOCATION:Caesars Superdome\nNew Orleans
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
