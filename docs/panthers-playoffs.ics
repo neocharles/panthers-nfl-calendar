@@ -240,12 +240,12 @@ TRANSP:TRANSPARENT
 URL:https://www.nfl.com/games/panthers-at-saints-2026-reg-10
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:Baltimore Ravens @ Carolina Panthers
+SUMMARY:Baltimore Ravens 33 @ Carolina Panthers 35
 DTSTART:20261122T180000Z
 DTEND:20261122T211500Z
-DTSTAMP:20261109T095658Z
+DTSTAMP:20261122T204631Z
 UID:181415e8075fd6fd6adb104c3d4dfdef@nfl-calendar.local
-SEQUENCE:1
+SEQUENCE:2
 CATEGORIES:NFL,Football,Week 11
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 11\n\nBaltimore Ravens @ Carolina Panthers\n\nK
@@ -259,7 +259,7 @@ DESCRIPTION:NFL 2026 · Week 11\n\nBaltimore Ravens @ Carolina Panthers\n\nK
  the US\; eligible subscriptions and geographic restrictions apply.\n\nVenu
  e\nBank of America Stadium\nCharlotte\n\nSchedule source: https://www.nfl.
  com/games/ravens-at-panthers-2026-reg-11
-LAST-MODIFIED:20261109T095658Z
+LAST-MODIFIED:20261122T204631Z
 LOCATION:Bank of America Stadium\nCharlotte
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
