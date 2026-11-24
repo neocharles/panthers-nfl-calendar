@@ -293,18 +293,23 @@ BEGIN:VEVENT
 SUMMARY:Carolina Panthers @ Minnesota Vikings
 DTSTART:20261206T212500Z
 DTEND:20261207T004000Z
-DTSTAMP:20260927T005047Z
+DTSTAMP:20261124T014500Z
 UID:e0e68ac26a79319362ed288713fff19f@nfl-calendar.local
-SEQUENCE:0
+SEQUENCE:1
 CATEGORIES:NFL,Football,Week 13
 CREATED:20260927T005047Z
 DESCRIPTION:NFL 2026 · Week 13\n\nCarolina Panthers @ Minnesota Vikings\n\n
  Kickoff: Sunday\, December 6\, 2026 at 4:25 PM EST (America/New_York)\nEst
- imated game duration: 3 hours 15 minutes.\n\nWatch\nTV: CBS\nRegional broa
- dcast\; local market coverage varies.\n\nVenue\nU.S. Bank Stadium\nMinneap
- olis\n\nSchedule source: https://www.nfl.com/games/panthers-at-vikings-202
- 6-reg-13
-LAST-MODIFIED:20260927T005047Z
+ imated game duration: 3 hours 15 minutes.\n\nWatch\nTV: CBS\nStreaming: NF
+ L+\, Paramount+\nNFL Sunday Ticket: eligible out-of-market Sunday afternoo
+ n viewing\; local and national blackouts apply.\nNFL+: local and primetime
+  live game streams require a phone or tablet\; market and device restricti
+ ons apply.\nParamount+: this game must be carried by your local CBS statio
+ n.\nRegional broadcast\; local market coverage varies.\nStreaming listings
+  are for the US\; eligible subscriptions and geographic restrictions apply
+ .\n\nVenue\nU.S. Bank Stadium\nMinneapolis\n\nSchedule source: https://www
+ .nfl.com/games/panthers-at-vikings-2026-reg-13
+LAST-MODIFIED:20261124T014500Z
 LOCATION:U.S. Bank Stadium\nMinneapolis
 STATUS:CONFIRMED
 TRANSP:TRANSPARENT
